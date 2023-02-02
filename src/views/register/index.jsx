@@ -1,5 +1,11 @@
 import { Box, Typography, Button, TextField } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import ClearIcon from '@mui/icons-material/Clear';
+// import { useNavigate } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useTheme } from '@mui/material';
@@ -27,12 +33,19 @@ const registerSchema = yup.object().shape({
   sdt: yup.string().required('Số điện thoại không được để trống.'),
   diaChi: yup.string().required('Địa chỉ không được để trống.'),
 });
-const Register = () => {
+const FormRegister = () => {
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-//   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleHuy = () => {
+    setOpen(false);
+  };
   const handleFormSubmit = async (values, onSubmitProps) => {
     //console.log(values);
     if (values.matKhau === values.nhapLaiMK) {
@@ -41,7 +54,7 @@ const Register = () => {
       .then((res) => {
         if (res.status === 201) {
             alert("Đăng ký thành công");
-            navigate(`/login`);
+            handleHuy();
         }
       })
       .catch((res) => {
@@ -54,21 +67,27 @@ const Register = () => {
     }
   };
   return (
-    <Box
-      width="100%"
-      height="100%"
+    <Box>
+      <li style={{fontSize: "16px", color: "#fff"}} className="nav-item" onClick={handleClickOpen}>
+        Đăng ký
+      </li>
+      <Dialog open={open}>
+        <DialogTitle>
+          <Box display="flex" justifyContent="end">
+            <ClearIcon onClick={handleHuy} />
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+        <Box
+        width="500px"
       display="flex"
       justifyContent="center"
       alignItems="center"
     >
       <Box
         m="0 auto"
-        p="30px"
-        width="60%"
+        width="100%"
         borderRadius="15px"
-        sx={{
-          background: colors.grey[900],
-        }}
       >
         <Box textAlign="center" mb="20px">
           <Typography
@@ -203,15 +222,17 @@ const Register = () => {
                   
                 </>
               </Box>
-
-                
-              
             </form>
           )}
         </Formik>
       </Box>
     </Box>
+          
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 };
 
-export default Register;
+export default FormRegister;
+  

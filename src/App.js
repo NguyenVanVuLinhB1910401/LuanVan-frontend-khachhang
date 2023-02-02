@@ -5,14 +5,20 @@ import { Routes, Route,  } from "react-router-dom";
 //import { useSelector} from "react-redux";
 import NavBar from "./components/Navbar";
 import TrangChu from "./views/trangchu/";
-import DangKy from "./views/register";
-import DangNhap from "./views/login";
 import SanPham from "./views/sanpham";
-import "./App.css";
+import ImageSlider from "./components/ImageSlider";
 function App() {
   const [theme, colorMode] = useMode();
   //console.log(useSelector((state) => state.token));
   // const isAuth = Boolean(useSelector((state) => state.token));
+  const slides = [
+    { url: "http://localhost:3002/assets/image1.png",},
+    { url: "http://localhost:3002/assets/image2.png",},
+    { url: "http://localhost:3002/assets/image3.png",},
+    { url: "http://localhost:3002/assets/image4.png",},
+    { url: "http://localhost:3002/assets/image5.png",},
+  ];
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
@@ -20,42 +26,12 @@ function App() {
         <div className="app">
           <main className="content">
             <NavBar />
-            <div className="slide">
-              <div className="show-image">
-                <img src={`../assets/image1.png`} className="img-feature" alt=""/>
-                <div className="control prev">Prev</div>
-                <div className="control next">Next</div>
-              </div>
-              <div className="list-image">
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-                  <div><img src={`../assets/image1.png`} alt=""/></div>
-              </div>
-            </div>
+            <ImageSlider slides={slides} />
             <Routes>
               <Route path="/" element={<TrangChu />} />
-              <Route path="/login" element={<DangNhap />} />
-              <Route path="/register" element={<DangKy />} />
               <Route path="/sanpham" element={<SanPham />} />
-              {/* <Route path="/login" element={isAuth ? <Navigate to="/" /> : <Login />} />
-              <Route path="/" element={isAuth ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="/loaisp" element={isAuth ? <LoaiSanPham /> : <Navigate to="/login" />} />
-              <Route path="/sanpham" element={isAuth ? <SanPham /> : <Navigate to="/login" />} />
-              <Route path="/sanpham/them" element={isAuth ? <FormSanPham /> : <Navigate to="/login" />} />
-              <Route path="/hangdt" element={isAuth ? <HangDienThoai /> : <Navigate to="/login" />} />
-              <Route path="/chinhanh" element={isAuth ? <ChiNhanh /> : <Navigate to="/login" />} /> */}
             </Routes>
-            
-          
           </main>
-          
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>
