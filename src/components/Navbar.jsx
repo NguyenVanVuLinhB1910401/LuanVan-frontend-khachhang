@@ -44,11 +44,11 @@ const NavBar = () => {
             <Link to="/sanpham">Liên hệ</Link>
           </li>
           <li className="nav-item">
-            <Link to="/cart">Giỏ hàng</Link>
+            <Link to="/giohang">Giỏ hàng</Link>
           </li>
           {token && (
             <li className="nav-item">
-                <Link to="/líchudathang">Lịch sử đặt hàng</Link>
+                <Link to="/lichsudathang">Lịch sử đặt hàng</Link>
             </li>
           )}
         </Box>

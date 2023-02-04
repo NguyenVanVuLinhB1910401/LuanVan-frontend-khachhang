@@ -11,7 +11,7 @@ const TrangChu = () => {
   const token = useSelector((state) => state.token);
   const [spMoi, setSPMoi] = useState([]);
   const [spNoiBat, setSPNoiBat] = useState([]);
-
+  const navigate = useNavigate();
   const getAllSanPhamMoi = () => {
     axios
       .get('http://localhost:3000/api/sanphams/spmoi', {
@@ -33,8 +33,30 @@ const TrangChu = () => {
       .catch((err) => console.log(err));
   };
 
+  const getAllSanPhamNoiBat = () => {
+    axios
+      .get('http://localhost:3000/api/sanphams/spnoibat', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          // const data = response.data.result.map((res) => {
+          //     return {id: res._id, tenLoaiSP: res.tenLoaiSP};
+          // })
+
+          const data = response.data.result;
+          // console.log(data);
+          setSPNoiBat(data);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getAllSanPhamMoi();
+    getAllSanPhamNoiBat();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Box p="0px 100px">
@@ -50,7 +72,7 @@ const TrangChu = () => {
         <>
           {spMoi.map((pro) => {
             return (
-              <div sx={{ gridColumn: 'span 1' }}>
+              <div key={pro._id} sx={{ gridColumn: 'span 1' }} onClick={() => navigate("/chitietsanpham?idSP="+pro._id)}>
                 <Stack>
                   <Box height="250px" width="100%">
                     <img
@@ -64,7 +86,10 @@ const TrangChu = () => {
                     <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham + " " + pro.dungLuong+"GB"}</Typography>
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.idGiaBan.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.giaGoc).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
                   </Box>
                 </Stack>
               </div>
@@ -73,6 +98,42 @@ const TrangChu = () => {
         </>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center" p="10px"><Typography fontSize="50px" fontWeight="bold">Sản Phẩm Nổi Bật</Typography></Box>
+      <Box
+        display="grid"
+        gap="15px"
+        gridTemplateColumns="repeat(5, minmax(0, 1fr))"
+        sx={{
+          '& > div': 'span 5',
+        }}
+      >
+        <>
+          {spNoiBat.map((pro) => {
+            return (
+              <div key={pro._id} sx={{ gridColumn: 'span 1' }} onClick={() => navigate("/chitietsanpham?idSP="+pro._id)}>
+                <Stack>
+                  <Box height="250px" width="100%">
+                    <img
+                      width="100%"
+                      height="100%"
+                      src={`http://localhost:3000/assets/${pro.anhDaiDien}`}
+                      alt=""
+                    />
+                  </Box>
+                  <Box>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham + " " + pro.dungLuong+"GB"}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.giaGoc).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                  </Box>
+                </Stack>
+              </div>
+            );
+          })}
+        </>
+      </Box>
     </Box>
   );
 };

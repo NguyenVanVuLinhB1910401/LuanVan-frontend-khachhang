@@ -6,7 +6,10 @@ import { Routes, Route,  } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import TrangChu from "./views/trangchu/";
 import SanPham from "./views/sanpham";
+import ChiTietSanPham from "./views/chitietsanpham";
+import GioHang from "./views/cart";
 import ImageSlider from "./components/ImageSlider";
+import Footer from "./components/Footer";
 function App() {
   const [theme, colorMode] = useMode();
   //console.log(useSelector((state) => state.token));
@@ -25,12 +28,16 @@ function App() {
         <CssBaseline />
         <div className="app">
           <main className="content">
+          <ImageSlider slides={slides} />
             <NavBar />
-            <ImageSlider slides={slides} />
+            
             <Routes>
               <Route path="/" element={<TrangChu />} />
               <Route path="/sanpham" element={<SanPham />} />
+              <Route path="/chitietsanpham" element={<ChiTietSanPham />} />
+              <Route path="/giohang" element={<GioHang />} />
             </Routes>
+            <Footer />
           </main>
         </div>
       </ThemeProvider>
