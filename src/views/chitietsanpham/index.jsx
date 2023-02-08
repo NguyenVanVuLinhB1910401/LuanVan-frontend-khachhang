@@ -5,15 +5,16 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { tokens } from '../../theme';
 import { useTheme } from '@mui/material';
+import { addToCart } from '../../state';
 const ChiTietSanPham = () => {
   const [searchParams] = useSearchParams();
   const idSP = searchParams.get('idSP');
-  console.log(idSP);
+  //console.log(idSP);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const token = useSelector((state) => state.token);
   const [product, setProduct] = useState([]);
-
+  const dispatch = useDispatch();
   const getOneSanPham = () => {
     axios
       .get('http://localhost:3000/api/sanphams/' + idSP, {
@@ -55,13 +56,13 @@ const ChiTietSanPham = () => {
       >
         <>
           <Box sx={{ gridColumn: 'span 3', height: '400px', width: '100%' }}>
-            <img
+            {product.anhDaiDien && (<img
               width="100%"
               height="100%"
               src={`http://localhost:3000/assets/${product.anhDaiDien}`}
               alt="hình ảnh"
-            />
-          </Box>
+            />)   }       
+            </Box>
           <Box sx={{ gridColumn: 'span 3' }}>
             <Stack>
               <Box>
@@ -103,6 +104,7 @@ const ChiTietSanPham = () => {
                         color: "#fff"
                     }
                   }}
+                  onClick={() => dispatch(addToCart({id: product._id,tenSanPham: product.tenSanPham,image:  product.anhDaiDien,gia: product.giaBan}))}
                 >
                   Thêm vào giỏ hàng
                 </Button>

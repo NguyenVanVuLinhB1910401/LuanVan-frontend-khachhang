@@ -5,6 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { tokens } from '../../theme';
 import { useTheme } from '@mui/material';
+import ImageSlider from "../../components/ImageSlider";
+const slides = [
+  { url: "http://localhost:3002/assets/image1.png",},
+  { url: "http://localhost:3002/assets/image2.png",},
+  { url: "http://localhost:3002/assets/image3.png",},
+  { url: "http://localhost:3002/assets/image4.png",},
+  { url: "http://localhost:3002/assets/image5.png",},
+];
 const TrangChu = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -60,6 +68,7 @@ const TrangChu = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Box p="0px 100px">
+      <ImageSlider slides={slides} />
       <Box display="flex" alignItems="center" justifyContent="center" p="10px"><Typography fontSize="50px" fontWeight="bold">Sản Phẩm Mới</Typography></Box>
       <Box
         display="grid"

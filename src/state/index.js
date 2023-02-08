@@ -9,7 +9,8 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     user: null,
-    token: null
+    token: null,
+    cart: [],
 };
 
 export const authSlice = createSlice({
@@ -23,9 +24,34 @@ export const authSlice = createSlice({
         setLogout: (state, action) => {
             state.user = null;
             state.token = null;
-        }
+        },
+        addToCart: (state, action) => {
+            const itemInCart = state.cart.find((item) => item.id === action.payload.id);
+            if (itemInCart) {
+              itemInCart.soLuong++;
+            } else {
+              state.cart.push({ ...action.payload, soLuong: 1 });
+            }
+          },
+          incrementQuantity: (state, action) => {
+            const item = state.cart.find((item) => item.id === action.payload);
+            item.soLuong++;
+          },
+          decrementQuantity: (state, action) => {
+            const item = state.cart.find((item) => item.id === action.payload);
+            if (item.soLuong === 1) {
+              item.soLuong = 1
+            } else {
+              item.soLuong--;
+            }
+          },
+          removeItem: (state, action) => {
+            console.log(action.payload);
+            const removeItem = state.cart.filter((item) => item.id !== action.payload);
+            state.cart = removeItem;
+          },
     }
 });
 
-export const { setLogin, setLogout } = authSlice.actions;
+export const { setLogin, setLogout, addToCart, incrementQuantity, decrementQuantity, removeItem } = authSlice.actions;
 export default authSlice.reducer;
