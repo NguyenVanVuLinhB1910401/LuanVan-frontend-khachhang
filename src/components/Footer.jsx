@@ -4,10 +4,13 @@ const Footer = () => {
 
     return (
         <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
       sx={{
         width: "100%",
-        height: "auto",
-        padding: "20px 0px",
+        height: "8vh",
+        // padding: "20px 0px",
         background: "#4cceac"
       }}
     >

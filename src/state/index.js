@@ -29,8 +29,10 @@ export const authSlice = createSlice({
             const itemInCart = state.cart.find((item) => item.id === action.payload.id);
             if (itemInCart) {
               itemInCart.soLuong++;
+              alert("Thêm vào giỏ hàng thành công")
             } else {
               state.cart.push({ ...action.payload, soLuong: 1 });
+              alert("Thêm vào giỏ hàng thành công")
             }
           },
           incrementQuantity: (state, action) => {

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { tokens } from '../../theme';
 import { useTheme } from '@mui/material';
 import { addToCart } from '../../state';
+//import ReactHtmlParser from "react-html-parser";
 const ChiTietSanPham = () => {
   const [searchParams] = useSearchParams();
   const idSP = searchParams.get('idSP');
@@ -201,6 +202,7 @@ const ChiTietSanPham = () => {
           </Box>
         </>
       </Box>
+      {<div dangerouslySetInnerHTML={{ __html: product.moTa }} />}
       <Box p="10px 0px"><Typography fontSize="40px" fontWeight="bold">Thông tin sản phẩm</Typography></Box>
       <Box>
         <Typography textAlign="justify"  fontSize="25px">{product.moTa}</Typography>

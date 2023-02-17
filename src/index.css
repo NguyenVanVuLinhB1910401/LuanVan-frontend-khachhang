@@ -6,7 +6,8 @@ body,
 .app,
 .content {
   width: 100%;
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   font-family: 'Source Sans Pro', sans-serif;
   /* overflow-y: auto; */
 }
@@ -14,6 +15,8 @@ body,
 .app {
   display: flex;
   position: relative;
+  /* background-color: #f2f0f0; */
+  background-color: #fbfbfb;
 }                 
 
 /* ::-webkit-scrollbar {

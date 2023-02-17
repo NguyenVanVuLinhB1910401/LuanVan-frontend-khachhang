@@ -92,7 +92,7 @@ const TrangChu = () => {
                     />
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham + " " + pro.dungLuong+"GB"}</Typography>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham}</Typography>
                   </Box>
                   <Box>
                     <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.giaGoc).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>

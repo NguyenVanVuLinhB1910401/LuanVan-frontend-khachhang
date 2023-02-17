@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material';
 import { tokens } from '../theme';
 import './Navbar.css';
@@ -15,12 +15,13 @@ const NavBar = () => {
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   return (
     <Box
       display="flex"
       sx={{
-        height: '50px',
-        background: colors.blueAccent[300],
+        height: '8vh',
+        background: "#4cceac",
       }}
     >
       <img src={`../../logo.jpg`} width="150px" alt="logo" />
@@ -56,7 +57,7 @@ const NavBar = () => {
           {token ? (
             <li
               className="nav-item"
-              onClick={() => dispatch(setLogout())}
+              onClick={() => {dispatch(setLogout()); navigate("/")}}
               style={{ fontSize: '16px', color: '#fff' }}
             >
               Đăng xuất ({user.hoTen})

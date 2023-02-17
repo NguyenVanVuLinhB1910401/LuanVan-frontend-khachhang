@@ -8,7 +8,9 @@ import TrangChu from "./views/trangchu/";
 import SanPham from "./views/sanpham";
 import ChiTietSanPham from "./views/chitietsanpham";
 import GioHang from "./views/cart";
-
+import ThanhToan from "./views/thanhtoan";
+import LichSuDatHang from "./views/lichsudathang";
+import ChiTietDonHang from "./views/lichsudathang/chitietdonhang";
 import Footer from "./components/Footer";
 function App() {
   const [theme, colorMode] = useMode();
@@ -28,6 +30,9 @@ function App() {
               <Route path="/sanpham" element={<SanPham />} />
               <Route path="/chitietsanpham" element={<ChiTietSanPham />} />
               <Route path="/giohang" element={<GioHang />} />
+              <Route path="/thanhtoan" element={<ThanhToan />} />
+              <Route path="/lichsudathang" element={<LichSuDatHang />} />
+              <Route path="/chitietdonhang/:id" element={<ChiTietDonHang />} />
             </Routes>
             <Footer />
           </main>
