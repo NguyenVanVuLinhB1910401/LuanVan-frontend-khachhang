@@ -4,16 +4,18 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import DetailsIcon from '@mui/icons-material/Details';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { toast, ToastContainer } from 'react-toastify';
 const ChiTietDonHang = () => {
   const [donHang, setDonHang] = useState({});
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const { id } = useParams();
+  const { id, htnh } = useParams();
+  const searchParams = new URLSearchParams(window.location.search)
   const navigate = useNavigate();
+  let nf = new Intl.NumberFormat('vi-VN');
   const getOneDonHang = () => {
     axios
-      .get('http://localhost:3000/api/donhangs/' + id, {
+      .get('http://localhost:3000/api/donhangs/' + id+"/?htnh="+searchParams.get("htnh"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -31,48 +33,51 @@ const ChiTietDonHang = () => {
       })
       .catch((err) => console.log(err));
   };
+  const handleHuy = (id, dsSanPham, idCNDH) => {
+    console.log("Data", idCNDH);
+    axios
+      .put('http://localhost:3000/api/donhangs/khhuy/' + id, {dsSanPham, idCNDH},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        //console.log(response);
+        if (response.status === 200 && response.data.code === 1) {
+          toast.success("Đơn hàng đã được hủy");
+        }else{
+          toast.error("Hủy đơn hàng thất bại");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
   useEffect(() => {
     getOneDonHang();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Box
       minHeight="84vh"
-      m="0 135px"
       p="20px 200px"
       sx={{ background: '#fff' }}
     >
       <Box display="flex" justifyContent="space-between">
         <Box>
-          <Typography fontSize="30px" fontWeight="200">
+          <Typography fontSize="24px" fontWeight="200">
             CHI TIẾT ĐƠN HÀNG #{donHang.donHang?._id}
           </Typography>
         </Box>
         <Box display="flex" alignItems="center">
-          <Typography fontSize="20px">Trạng thái: </Typography>
+          <Typography fontSize="16px">Trạng thái: </Typography>
           <Typography fontSize="20px" sx={{ color: '#4cceac' }}>
-            {donHang.donHang?.status}
+            {donHang.donHang?.status === "Đã thanh toán" ? "Chưa xử lý" : donHang.donHang?.status}
           </Typography>
         </Box>
       </Box>
-      <Box
-        display="flex"
-        sx={{
-          borderBottom: '1px solid #e0e0e0',
-          padding: '5px 10px 10px 0px',
-        }}
-      >
-        <Typography fontSize="20px">Mua tại: </Typography>
-        <Typography fontSize="20px">
-          {donHang.donHang?.idCN?.tenChiNhanh},{' '}
-        </Typography>
-        <Typography fontSize="20px"> địa chỉ: </Typography>
-        <Typography fontSize="20px">
-          {donHang.donHang?.idCN?.diaChiChiNhanh},{' '}
-        </Typography>
-      </Box>
+      
       {donHang.dsSanPham !== undefined && donHang.dsSanPham.map((sp) => {
         return (
           <Box
+            key={sp._id}
             display="flex"
             justifyContent="space-between"
             sx={{
@@ -126,7 +131,7 @@ const ChiTietDonHang = () => {
                 <Typography fontSize="20px">Giá</Typography>
               </Box>
               <Box>
-                <Typography fontSize="20px">{sp.gia}</Typography>
+                <Typography fontSize="20px">{nf.format(sp.gia)}</Typography>
               </Box>
             </Box>
             <Box
@@ -140,7 +145,7 @@ const ChiTietDonHang = () => {
                 <Typography fontSize="20px">Thành tiền</Typography>
               </Box>
               <Box>
-                <Typography fontSize="20px">{sp.gia * sp.soLuong}</Typography>
+                <Typography fontSize="20px">{nf.format(sp.gia * sp.soLuong)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -161,7 +166,7 @@ const ChiTietDonHang = () => {
             </Typography>
           </Box>
           <Box>
-            <Typography fontSize="20px">{donHang.donHang?.total}</Typography>
+            <Typography fontSize="20px" fontWeight="bold">{nf.format(donHang.donHang?.total)+ " VNĐ"}</Typography>
           </Box>
         </Box>
       </Box>
@@ -173,10 +178,10 @@ const ChiTietDonHang = () => {
           padding: '5px 10px 10px 0px',
         }}
       >
-        <Button fontSize="20px" sx={{background: " #ff6666",':hover': {
+        {(donHang.donHang?.status === "Chưa xử lý" ) && <Button fontSize="20px" sx={{background: " #ff6666",':hover': {
                 background: '#ff3333',
                 color: '#fff',
-              }}}>Hủy đơn hàng</Button>
+              }}} onClick={() => handleHuy(donHang.donHang?._id, donHang.dsSanPham, donHang.donHang?.idCNDH._id)}>Hủy đơn hàng</Button>}
       </Box>
       <Box
         sx={{
@@ -195,11 +200,18 @@ const ChiTietDonHang = () => {
             {donHang.donHang?.email}
           </Typography>
         </Box>
-        <Box>
-          <Typography fontSize="20px">
-            Nơi nhận hàng: {donHang.donHang?.diaChi}
-          </Typography>
-        </Box>
+        <Box
+        display="flex"
+        sx={{
+          borderBottom: '1px solid #e0e0e0',
+          padding: '5px 10px 10px 0px',
+        }}
+      >
+        <Typography fontSize="20px">Địa chỉ nhận hàng: </Typography>
+        <Typography fontSize="20px">
+          {donHang.donHang?.htnh === "NTCH" ? donHang.donHang?.idCNNH?.tenChiNhanh +" - "+donHang.donHang?.idCNNH?.diaChiChiNhanh : donHang.donHang?.diaChi}
+        </Typography>
+      </Box>
         <Box>
           <Typography fontSize="20px">
             Hình thức thanh toán: {donHang.donHang?.httt}
@@ -207,7 +219,9 @@ const ChiTietDonHang = () => {
         </Box>
         <Box>
           <Typography fontSize="20px">
-            Ngày mua: {donHang.donHang?.ngayDat}
+            Ngày mua: {new Date(donHang.donHang?.ngayDat).toLocaleString('en-GB', {
+      hour12: false,
+    })}
           </Typography>
         </Box>
       </Box>

@@ -6,19 +6,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 //import CartItem from "./CartItem";
 import { incrementQuantity, decrementQuantity, removeItem } from '../../state';
+import { toast } from 'react-toastify';
+
 const GioHang = () => {
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  let nf = new Intl.NumberFormat('vi-VN');
+
   return (
-    <Box m="0px 135px" sx={{ minHeight: '84vh', background: '#fff' }}>
+    <Box sx={{ minHeight: '84vh', background: '#fff' }}>
       <Box>
         <Typography textAlign="center" fontSize="50px" fontWeight="bold">
-          Giỏ Hàng
+          {cart.length === 0 ? "Giỏ Hàng Rỗng" : "Giỏ Hàng"}
         </Typography>
       </Box>
-      <Box
+      {cart.length > 0 && (<Box
         display="flex"
         justifyContent="space-between"
         sx={{
@@ -111,7 +115,7 @@ const GioHang = () => {
           alignItems="center"
           justifyContent="center"
         ></Box>
-      </Box>
+      </Box>)}
       {cart !== undefined &&
         cart.map((sp, index) => {
           return (
@@ -185,7 +189,7 @@ const GioHang = () => {
                 justifyContent="center"
               >
                 <Box>
-                  <Typography fontSize="20px">{sp.gia}</Typography>
+                  <Typography fontSize="20px">{nf.format(sp.gia)}</Typography>
                 </Box>
               </Box>
               <Box
@@ -196,7 +200,7 @@ const GioHang = () => {
                 justifyContent="center"
               >
                 <Box>
-                  <Typography fontSize="20px">{sp.gia * sp.soLuong}</Typography>
+                  <Typography fontSize="20px">{nf.format(sp.gia * sp.soLuong)}</Typography>
                 </Box>
               </Box>
               <Box
@@ -214,7 +218,7 @@ const GioHang = () => {
           );
         })}
 
-      <Box display="flex" justifyContent="center" m="10px">
+        {cart.length > 0 && (      <Box display="flex" justifyContent="center" m="10px">
         <Box marginRight="20px">
           <Button
             sx={{
@@ -234,10 +238,14 @@ const GioHang = () => {
         <Box>
           <Button
             onClick={() => {
-              if (user !== null) {
-                navigate('/thanhtoan');
+              if (cart.length === 0) {
+                toast.warning("Giỏ hàng rỗng.");
               } else {
-                alert('Vui lòng đăng nhập trước khi thanh toán!!!');
+                if (user !== null) {
+                  navigate('/thanhtoan');
+                } else {
+                  toast.warning('Bạn chưa đăng nhập!!!');
+                }
               }
             }}
             sx={{
@@ -253,7 +261,7 @@ const GioHang = () => {
             Thanh toán
           </Button>
         </Box>
-      </Box>
+      </Box>)}
     </Box>
   );
 };

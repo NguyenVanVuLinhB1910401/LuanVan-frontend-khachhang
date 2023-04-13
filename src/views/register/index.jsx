@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material';
 import { tokens } from '../../theme';
 import axios from 'axios';
 // import { useDispatch } from 'react-redux';
-
+import { toast } from 'react-toastify';
 
 const initialValues = {
   hoTen: '',
@@ -53,17 +53,17 @@ const FormRegister = () => {
       .post('http://localhost:3000/api/users/register', values)
       .then((res) => {
         if (res.status === 201) {
-            alert("Đăng ký thành công");
+            toast.success("Đăng ký thành công");
             handleHuy();
         }
       })
       .catch((res) => {
         if (res.response.status === 400) {
-          alert(res.response.data.message);
+          toast.error(res.response.data.message);
         }
       });
     } else {
-        alert("Mật khẩu không khớp");
+        toast.error("Mật khẩu không khớp");
     }
   };
   return (

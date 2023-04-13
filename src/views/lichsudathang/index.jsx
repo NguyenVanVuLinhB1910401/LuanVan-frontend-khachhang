@@ -9,7 +9,7 @@ const LichSuDatHang = () => {
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const navigate = useNavigate();
-  
+  let nf = new Intl.NumberFormat('vi-VN');
   const getALLDonHangDaMua = () => {
     axios
       .get('http://localhost:3000/api/donhangs', {
@@ -37,7 +37,7 @@ const LichSuDatHang = () => {
     <Box 
     display="flex"
     alignItems="center"
-    justifyContent="center" minHeight="84vh" m="0 135px" sx={{background: "#fff"}}>
+    justifyContent="center" minHeight="84vh" sx={{background: "#fff"}}>
         <Box>
         <Box display="flex" justifyContent="center" margin="10px 0px">
         <Typography fontSize="30px" fontWeight="bold">
@@ -127,7 +127,9 @@ const LichSuDatHang = () => {
                   // fontWeight="bold"
                   sx={{ gridColumn: 'span 2', textAlign: 'center' }}
                 >
-                  {dh.ngayDat}
+                  {new Date(dh.ngayDat).toLocaleString('en-GB', {
+      hour12: false,
+    })}
                 </Typography>
 
                 <Typography
@@ -136,25 +138,25 @@ const LichSuDatHang = () => {
                   // fontWeight="bold"
                   sx={{ gridColumn: 'span 2' }}
                 >
-                  {dh.total}
+                  {nf.format(dh.total)+ " VNĐ"}
                 </Typography>
 
                 <Typography
                   fontSize="18px"
-                  fontWeight="bold"
+                  
                   sx={{ gridColumn: 'span 2', textAlign: 'center' }}
                 >
                   {dh.status}
                 </Typography>
                 <Typography
                   fontSize="18px"
-                  fontWeight="bold"
+                  
                   sx={{ gridColumn: 'span 2', textAlign: 'center' }}
                 >
                   {dh.httt}
                 </Typography>
                 <Box sx={{ gridColumn: 'span 1' }}>
-                  <IconButton onClick={() => navigate("/chitietdonhang/"+dh._id)}>
+                  <IconButton onClick={() => navigate("/chitietdonhang/"+dh._id+"?htnh="+dh.htnh)}>
                     <DetailsIcon />
                   </IconButton>
                 </Box>

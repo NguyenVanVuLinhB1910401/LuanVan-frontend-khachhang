@@ -17,12 +17,13 @@ const TrangChu = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const token = useSelector((state) => state.token);
+  const idCN = useSelector((state) => state.idCN)
   const [spMoi, setSPMoi] = useState([]);
   const [spNoiBat, setSPNoiBat] = useState([]);
   const navigate = useNavigate();
   const getAllSanPhamMoi = () => {
     axios
-      .get('http://localhost:3000/api/sanphams/spmoi', {
+      .get(`http://localhost:3000/api/sanphams/spmoi/${idCN}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,7 +44,7 @@ const TrangChu = () => {
 
   const getAllSanPhamNoiBat = () => {
     axios
-      .get('http://localhost:3000/api/sanphams/spnoibat', {
+      .get(`http://localhost:3000/api/sanphams/spnoibat/${idCN}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +68,7 @@ const TrangChu = () => {
     getAllSanPhamNoiBat();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Box p="0px 100px">
+    <Box>
       <ImageSlider slides={slides} />
       <Box display="flex" alignItems="center" justifyContent="center" p="10px"><Typography fontSize="50px" fontWeight="bold">Sản Phẩm Mới</Typography></Box>
       <Box
@@ -87,18 +88,18 @@ const TrangChu = () => {
                     <img
                       width="100%"
                       height="100%"
-                      src={`http://localhost:3000/assets/${pro.anhDaiDien}`}
+                      src={`http://localhost:3000/assets/${pro.sanpham?.anhDaiDien}`}
                       alt=""
                     />
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham}</Typography>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.sanpham?.tenSanPham}</Typography>
                   </Box>
                   <Box>
-                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.giaGoc).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.sanpham?.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.sanpham?.giaBan*(1-pro.sanpham?.khuyenMai/100)).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
                   </Box>
                 </Stack>
               </div>
@@ -124,18 +125,18 @@ const TrangChu = () => {
                     <img
                       width="100%"
                       height="100%"
-                      src={`http://localhost:3000/assets/${pro.anhDaiDien}`}
+                      src={`http://localhost:3000/assets/${pro.sanpham?.anhDaiDien}`}
                       alt=""
                     />
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.tenSanPham + " " + pro.dungLuong+"GB"}</Typography>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{pro.sanpham?.tenSanPham}</Typography>
                   </Box>
                   <Box>
-                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.giaGoc).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                    <Typography fontSize="15px" sx={{textDecorationLine: "line-through"}} color="red" fontWeight="bold" textAlign="center">{parseInt(pro.sanpham?.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
                   </Box>
                   <Box>
-                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.giaBan).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
+                    <Typography fontSize="20px" fontWeight="bold" textAlign="center">{parseInt(pro.sanpham?.giaBan*(1-pro.sanpham?.khuyenMai)).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Typography>
                   </Box>
                 </Stack>
               </div>

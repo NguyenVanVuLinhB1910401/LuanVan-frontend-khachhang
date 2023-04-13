@@ -3,7 +3,7 @@ li {
 }
 li:hover {
     background-color: #6870fa;
-    padding: 5px;
+    padding: 10px;
     border-radius: 20px;
 }
 a {

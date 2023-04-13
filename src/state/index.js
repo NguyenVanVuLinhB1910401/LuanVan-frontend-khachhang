@@ -6,11 +6,12 @@
 //  - reducers la cac ham lay trang thai hien tai cua ung dung, thuc hien mot hanh dong va tra ve trang thai moi
 
 import {createSlice} from "@reduxjs/toolkit";
-
+import { toast } from 'react-toastify';
 const initialState = {
     user: null,
     token: null,
     cart: [],
+    idCN: '',
 };
 
 export const authSlice = createSlice({
@@ -24,15 +25,16 @@ export const authSlice = createSlice({
         setLogout: (state, action) => {
             state.user = null;
             state.token = null;
+            toast.success("Đăng xuất thành công");
         },
         addToCart: (state, action) => {
             const itemInCart = state.cart.find((item) => item.id === action.payload.id);
             if (itemInCart) {
               itemInCart.soLuong++;
-              alert("Thêm vào giỏ hàng thành công")
+              toast.success("Thêm sản phẩm thành công");
             } else {
               state.cart.push({ ...action.payload, soLuong: 1 });
-              alert("Thêm vào giỏ hàng thành công")
+              toast.success("Thêm sản phẩm thành công");
             }
           },
           incrementQuantity: (state, action) => {
@@ -48,12 +50,20 @@ export const authSlice = createSlice({
             }
           },
           removeItem: (state, action) => {
-            console.log(action.payload);
+            //console.log(action.payload);
             const removeItem = state.cart.filter((item) => item.id !== action.payload);
             state.cart = removeItem;
+            toast.success("Xóa sản phẩm thành công");
           },
+          removeAll: (state, action) => {            
+            state.cart = [];
+            //toast.success("Xóa tất cả sản phẩm thành công");
+          },
+          setIdCN: (state, action) => {
+            state.idCN = action.payload.idCN;
+          }
     }
 });
 
-export const { setLogin, setLogout, addToCart, incrementQuantity, decrementQuantity, removeItem } = authSlice.actions;
+export const { setLogin, setLogout, addToCart, incrementQuantity, decrementQuantity, removeItem, removeAll, setIdCN } = authSlice.actions;
 export default authSlice.reducer;

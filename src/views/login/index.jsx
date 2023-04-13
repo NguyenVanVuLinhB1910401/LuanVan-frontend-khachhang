@@ -14,6 +14,7 @@ import { tokens } from '../../theme';
 import { useTheme } from '@mui/material';
 import { setLogin } from '../../state';
 import ClearIcon from '@mui/icons-material/Clear';
+import { toast } from 'react-toastify';
 const initialValues = {
   taiKhoan: '',
   matKhau: '',
@@ -50,13 +51,13 @@ const FormDangNhap = () => {
             })
           );
           handleHuy();
-          navigate('/');
-          
+          //navigate('/');
+          toast.success("Đăng nhập thành công");
         }
       })
       .catch((res) => {
         if (res.response.status === 400) {
-          alert(res.response.data.message);
+          toast.error(res.response.data.message);
         }
       });
     
@@ -67,13 +68,16 @@ const FormDangNhap = () => {
       <li style={{fontSize: "16px", color: "#fff"}} className="nav-item" onClick={handleClickOpen}>
         Đăng nhập
       </li>
-      <Dialog open={open}>
+      <Dialog open={open} >
+        <Box sx={{
+      backgroundImage: "linear-gradient(to right, #d0eef2, #a2ebf5)",
+    }}>
         <DialogTitle>
           <Box display="flex" justifyContent="end">
             <ClearIcon onClick={handleHuy} />
           </Box>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent >
           <Box
             width="500px"
             display="flex"
@@ -155,6 +159,7 @@ const FormDangNhap = () => {
             </Box>
           </Box>
         </DialogContent>
+        </Box>
       </Dialog>
     </Box>
   );

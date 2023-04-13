@@ -15,6 +15,7 @@ const SanPham = () => {
   const [hangDT, setHangDT] = useState('');
   const [loaiDT, setLoaiDT] = useState('');
   const [dsSanPham, setDSSanPham] = useState([]);
+  const idCN = useSelector((state) => state.idCN);
   let nf = new Intl.NumberFormat('vi-VN');
   const getALLLoaiSP = () => {
     axios
@@ -38,7 +39,7 @@ const SanPham = () => {
   };
   const getALLSanPham = () => {
     axios
-      .get('http://localhost:3000/api/sanphams')
+      .get(`http://localhost:3000/api/sanphamskhtheocn/${idCN}`)
       .then((res) => {
         if (res.status === 200) {
           setDSSanPham(res.data.result);
@@ -49,7 +50,7 @@ const SanPham = () => {
   const getALLSanPhamFilter = () => {
     if(loaiDT !== '' || hangDT !== '') {
       axios
-      .post('http://localhost:3000/api/sanphams/filter', {idHangDT: hangDT, idLoaiSP: loaiDT})
+      .get(`http://localhost:3000/api/sanphamskhtheocn/${idCN}?idLoai=${loaiDT}&&idHang=${hangDT}`)
       .then((res) => {
         console.log(res);
         if (res.status === 200) {
@@ -64,8 +65,11 @@ const SanPham = () => {
     getALLHangDT();
     getALLSanPham();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    getALLSanPham();
+  }, [idCN]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Box m="0px 135px" sx={{ background: '#fff' }}>
+    <Box sx={{ background: '#fff' }}>
       <Box display="flex" justifyContent="center" margin="10px 0px" p="5px" sx={{background: "#fbfbfb"}}>
         <Typography fontSize="30px" fontWeight="bold">
           DANH SÁCH SẢN PHẨM
@@ -189,9 +193,9 @@ const SanPham = () => {
                 }}
               >
                 <>
-                  {dsSanPham.map((sanpham) => (
+                  {dsSanPham.map((data) => (
                     <Box
-                      key={sanpham._id}
+                      key={data._id}
                       sx={{
                         gridColumn: 'span 3',
                         // border: "1px solid black",
@@ -201,19 +205,19 @@ const SanPham = () => {
                     >
                       <Box
                         onClick={() =>
-                          navigate('/chitietsanpham?idSP=' + sanpham._id)
+                          navigate('/chitietsanpham?idSP=' + data._id)
                         }
                       >
                         <img
                           width="100%"
                           height="100%"
-                          src={`http://localhost:3000/assets/${sanpham.anhDaiDien}`}
+                          src={`http://localhost:3000/assets/${data.sanpham.anhDaiDien}`}
                           alt="hình ảnh"
                         />
                       </Box>
                       <Box
                         onClick={() =>
-                          navigate('/chitietsanpham?idSP=' + sanpham._id)
+                          navigate('/chitietsanpham?idSP=' + data._id)
                         }
                       >
                         <Typography
@@ -221,12 +225,12 @@ const SanPham = () => {
                           fontWeight="bold"
                           textAlign="center"
                         >
-                          {sanpham.tenSanPham}
+                          {data.sanpham.tenSanPham}
                         </Typography>
                       </Box>
                       <Box
                         onClick={() =>
-                          navigate('/chitietsanpham?idSP=' + sanpham._id)
+                          navigate('/chitietsanpham?idSP=' + data._id)
                         }
                       >
                         <Typography
@@ -236,12 +240,12 @@ const SanPham = () => {
                           fontWeight="bold"
                           textAlign="center"
                         >
-                          {nf.format(sanpham.giaGoc) + ' VNĐ'}
+                          {nf.format(data.sanpham.giaBan) + ' VNĐ'}
                         </Typography>
                       </Box>
                       <Box
                         onClick={() =>
-                          navigate('/chitietsanpham?idSP=' + sanpham._id)
+                          navigate('/chitietsanpham?idSP=' + data._id)
                         }
                       >
                         <Typography
@@ -249,7 +253,7 @@ const SanPham = () => {
                           fontWeight="bold"
                           textAlign="center"
                         >
-                          {nf.format(sanpham.giaBan) + ' VNĐ'}
+                          {nf.format(data.sanpham.giaBan * (1 - data.sanpham.khuyenMai/100)) + ' VNĐ'}
                         </Typography>
                       </Box>
                       <Box
@@ -263,10 +267,11 @@ const SanPham = () => {
                           onClick={() =>
                             dispatch(
                               addToCart({
-                                id: sanpham._id,
-                                tenSanPham: sanpham.tenSanPham,
-                                image: sanpham.anhDaiDien,
-                                gia: sanpham.giaBan,
+                                id: data.sanpham._id,
+                                tenSanPham: data.sanpham.tenSanPham,
+                                image: data.sanpham.anhDaiDien,
+                                gia: data.sanpham.giaBan * (1 - data.sanpham.khuyenMai/100),
+                                idCN: data.idCN,
                               })
                             )
                           }

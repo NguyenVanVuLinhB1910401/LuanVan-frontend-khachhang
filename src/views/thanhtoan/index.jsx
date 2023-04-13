@@ -13,31 +13,39 @@ import {
 import { Field, Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { removeAll } from '../../state';
+import { toast } from 'react-toastify';
 const initialValues = {
   hoTen: '',
   sdt: '',
   email: '',
   diaChi: '',
-  ghiChu: 'Giao buổi trưa nha hihihi',
-  idCN: '',
+  ghiChu: '',
+  idCNNH: "",
   httt: 'Khi nhận hàng',
+  htnh: 'GHTN'
 };
 
 const thanhToanSchema = yup.object().shape({
   hoTen: yup.string().required('Không được để trống'),
   sdt: yup.string().required('Không được để trống'),
   email: yup.string().required('Không được để trống'),
-  diaChi: yup.string().required('Không được để trống'),
-  idCN: yup.string().required('Không được để trống'),
+  // diaChi: yup.string().required('Không được để trống'),
+  // idCN: yup.string().required('Không được để trống'),
   httt: yup.string().required('Không được để trống'),
 });
 const ThanhToan = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart);
+  const idCN = useSelector((state) => state.idCN);
+  let nf = new Intl.NumberFormat('vi-VN');
+  const [dsChiNhanh, setDSChiNhanh] = useState([]);
   const getTotal = () => {
     let totalQuantity = 0;
     let totalPrice = 0;
@@ -47,7 +55,6 @@ const ThanhToan = () => {
     });
     return { totalPrice, totalQuantity };
   };
-  const [dsChiNhanh, setDSChiNhanh] = useState([]);
   const getAllChiNhanh = () => {
     axios
       .get('http://localhost:3000/api/chinhanhs', {
@@ -63,49 +70,55 @@ const ThanhToan = () => {
       })
       .catch((err) => console.log(err));
   };
-  const dateTime = () => {
-    var today = new Date();
-    var date =
-      today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear();
-    var time =
-      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-    var dateTime = date + ' ' + time;
-    return dateTime;
-  };
   const handleFormSubmit = async (values, onSubmitProps) => {
     values.cart = cart;
     values.total = getTotal().totalPrice;
     values.idKH = user._id;
-    values.ngayDat = dateTime();
-    // console.log(values);
-    axios
+    values.ngayDat = new Date();
+    values.idCNDH = idCN;
+    //console.log(values);
+    if((values.htnh === "GHTN" && values.diaChi !== "") || (values.htnh === "NTCH" && values.idCNNH !== "")){
+      values.htnh === "GHTN" ? values.idCNNH = "" : values.diaChi = "";
+      axios
       .post(`http://localhost:3000/api/thanhtoans/thanhtoan`, values, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200 && response.data.code === 1) {
           //console.log(response.data.result);
-          alert('Đặt hàng thành công.');
+          toast.success('Đặt hàng thành công.');
+          dispatch(removeAll());
+          navigate("/lichsudathang");
         }
-        if (response.status === 200) {
-          console.log(response.data);
+        if (response.status === 200 && response.data.code === 2) {
+          //console.log(response.data);
           window.location = response.data.url;
+          dispatch(removeAll());
+          //navigate("/lichsudathang");
+        }
+        if (response.status === 200 && response.data.code === 0) {
+          //console.log(response.data);
+          toast.success(response.data.msg);
         }
       })
       .catch((err) => {
         console.log(err);
       });
+    }else{
+      toast.warning("Bạn chưa chọn địa chỉ nhận hàng");
+    }
+    
     //onSubmitProps.resetForm();
+    
   };
-
+  initialValues.idCNNH = idCN;
   useEffect(() => {
     getAllChiNhanh();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Box
-      m="0px 100px"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -182,7 +195,55 @@ const ThanhToan = () => {
                     marginBottom: '10px',
                   }}
                 />
+                
                 <TextField
+                  label="Ghi chú"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.ghiChu}
+                  name="ghiChu"
+                  error={Boolean(touched.ghiChu) && Boolean(errors.ghiChu)}
+                  helperText={touched.ghiChu && errors.ghiChu}
+                  sx={{
+                    width: '100%',
+                    marginBottom: '10px',
+                  }}
+                />
+                
+                
+                <FormControl
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    margin: '10px 0px',
+                  }}
+                >
+                  <Box >
+                    <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>Chọn hình thức nhận hàng:</Typography>
+                    <Field
+                      as={RadioGroup}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={values.htnh}
+                      name="htnh"
+                    >
+                      <Box display="flex">
+                        <FormControlLabel
+                          value="GHTN"
+                          control={<Radio />}
+                          label="Giao hàng tận nơi"
+                        />
+                        <FormControlLabel
+                          value="NTCH"
+                          control={<Radio />}
+                          label="Nhận tại cửa hàng"
+                        />
+                      </Box>
+                    </Field>
+                  </Box>
+                </FormControl>
+
+                {values.htnh === "GHTN" ?  (<TextField
                   label="Địa chỉ"
                   multiline
                   rows="2"
@@ -196,17 +257,17 @@ const ThanhToan = () => {
                     width: '100%',
                     marginBottom: '10px',
                   }}
-                />
-                <TextField
+                />) : 
+                ( <TextField
                   select
                   fullWidth
                   label="Chi nhánh"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.idCN}
-                  name="idCN"
-                  error={Boolean(touched.idCN) && Boolean(errors.idCN)}
-                  helperText={touched.idCN && errors.idCN}
+                  value={values.idCNNH}
+                  name="idCNNH"
+                  error={Boolean(touched.idCNNH) && Boolean(errors.idCNNH)}
+                  helperText={touched.idCNNH && errors.idCNNH}
                   sx={{ gridColumn: 'span 1' }}
                 >
                   <MenuItem value="">
@@ -220,7 +281,8 @@ const ThanhToan = () => {
                         ' )'}
                     </MenuItem>
                   ))}
-                </TextField>
+                </TextField> )}
+
                 <FormControl
                   sx={{
                     display: 'flex',
@@ -228,8 +290,8 @@ const ThanhToan = () => {
                     margin: '10px 0px',
                   }}
                 >
-                  <Box display="flex" gap={3} alignItems="center">
-                    <FormLabel>Hình thức thanh toán:</FormLabel>
+                  <Box >
+                    <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>Chọn hình thức thanh toán:</Typography>
                     <Field
                       as={RadioGroup}
                       onBlur={handleBlur}
@@ -395,7 +457,7 @@ const ThanhToan = () => {
                     justifyContent="center"
                   >
                     <Box>
-                      <Typography fontSize="20px">{sp.gia}</Typography>
+                      <Typography fontSize="20px">{nf.format(sp.gia)}</Typography>
                     </Box>
                   </Box>
                   <Box
@@ -407,7 +469,7 @@ const ThanhToan = () => {
                   >
                     <Box>
                       <Typography fontSize="20px">
-                        {sp.gia * sp.soLuong}
+                        {nf.format(sp.gia * sp.soLuong)}
                       </Typography>
                     </Box>
                   </Box>
@@ -422,7 +484,7 @@ const ThanhToan = () => {
                 </Typography>
               </Box>
               <Box>
-                <Typography fontSize="20px">{getTotal().totalPrice}</Typography>
+                <Typography fontSize="20px"  fontWeight="bold">{nf.format(getTotal().totalPrice)+" VNĐ"}</Typography>
               </Box>
             </Box>
           </Box>
